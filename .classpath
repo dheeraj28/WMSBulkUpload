@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/jtds-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/sqljdbc4-2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/JARS/commons-io-2.7-bin/commons-io-2.7.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/JARS/mail-1.4.7.jar" sourcepath="C:/Users/DheerajJoshi/.m2/repository/javax/mail/mail/1.4.7/mail-1.4.7-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/JARS/PMP/activation.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/JARS/jsch-0.1.54.jar" sourcepath="C:/Projects/jsch-0.1.55.zip"/>
+	<classpathentry kind="lib" path="C:/Projects/Retailer_Split/JARS/sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/poi-3.12-20150511.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/poi-ooxml-schemas-3.12-20150511.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/JARS/C17_WMST/sun.misc.BASE64Decoder.jar"/>
+	<classpathentry kind="lib" path="C:/Projects/Export_Test/poi-ooxml-3.12-20150511.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
