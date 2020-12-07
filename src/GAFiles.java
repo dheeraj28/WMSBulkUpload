@@ -38,8 +38,9 @@ public class GAFiles {
 		JSch jsch = new JSch();
 		Session session = null;
 		int totalFormLimit=2000;
-	
-
+		SimpleDateFormat sdf4= new SimpleDateFormat("ddMMMyyyyHHmmss");
+		Calendar calendar = Calendar.getInstance();
+		
 		java.util.Properties config = new java.util.Properties();
 		config.put("StrictHostKeyChecking", "no");		
 
@@ -118,14 +119,25 @@ public class GAFiles {
 								String FormName=CurrentFilename.substring(0,CurrentFilename.indexOf("_"));
 								BulkUpload BulkObj=new BulkUpload();
 
-								String BulkResult=BulkObj.CreateBulk(DownloadFolder, FormName , CurrentFilename,myLog);						
+								String BulkResult=BulkObj.CreateBulk(DownloadFolder, FormName , CurrentFilename,myLog);								
+								String BulkArch=ToFolder+"//Archive//"+String.valueOf(sdf4.format(calendar.getTime()))+"-"+CurrentFilename;
+								BulkUpload.movefiles(DownloadFolder,BulkArch);
+								//sftpChannel.exit(); // TESTING PURPOSE
+								//check if GA connection still exists if not create again.
+								if(sftpChannel.isConnected()) {
+									System.out.println("Session is UP");
+									}
+								else{
+									System.out.println("Session Down");
+									sftpChannel= getSFTPConn(myLog);
+									}
 
 								//MOVE FILES TO RESEPCTIVE FOLDER BASED ON RETURN MESSAGE FROM BULK FILE READ 
 
 								String BulkResultSplit[]=BulkResult.split("[$]");
 								System.out.println(BulkResult);
 								System.out.println(BulkResultSplit.length);
-								
+
 								if("Success".equalsIgnoreCase(BulkResultSplit[0])){
 									newFormsCreated=newFormsCreated+Integer.parseInt(BulkResultSplit[2]);
 									if(newFormsCreated<=totalFormLimit) {
@@ -137,7 +149,7 @@ public class GAFiles {
 										myLog.logger.info("\nBulk File "+CurrentFilename+" cant be processed as number of bulk forms per day limit is exceeded\n");
 										GAobj.MoveFilesinGA(sftpChannel,"/BulkUploadFiles//"+CurrentFilename,"Not Processed",CurrentFilename,valid,myLog);
 									}
-									
+
 								}else {							
 									myLog.logger.info("\nBulk File "+CurrentFilename+" Rejected,"+BulkResultSplit[1]+","+BulkResultSplit[2]);
 									GAobj.MoveFilesinGA(sftpChannel,"/BulkUploadFiles//"+CurrentFilename,"Rejected",CurrentFilename,valid,myLog);}
@@ -173,33 +185,22 @@ public class GAFiles {
 	public void mailNotificaiton(Log myLog) {
 		SimpleDateFormat sdf3= new SimpleDateFormat("ddMMMyyyyHHmmss");
 		Calendar calendar = Calendar.getInstance();
-		//String NotifBody="<html><body>Hi Team,<br><br>This is a notification regarding the Bulk upload reqest creation.<br><br>Please find the attached status for the requests created.<br><br>Regards,<br>WMS Cordys</body></html>";
-		String NotifBody="Hi Team,\n" + 
-				"\n" + 
-				"This is a notification regarding the Bulk upload reqest creation.\n" + 
-				"\n" + 
-				"Please find the attached status for the requests created.\n" + 
-				"\n" + 
-				"Regards,\n" + 
-				"WMS Cordys\n" + 
-				"";
+		String NotifBody="<html><body>Hi Team,<br><br>This is a notification regarding the Bulk upload request creation.<br><br>Please find the attached status for the requests created.<br><br>Regards,<br>WMS Cordys</body></html>";
 		GAFiles.MAILTEXT+="\r\n <EOF>";
 		String notif_MailAttachmentContent=GAFiles.MAILTEXT;
 		System.out.println(notif_MailAttachmentContent);
-		
+
 		try {			
-			String notiffile=configr.getProperty("mnotifFile")+"NOTIFFILE"+String.valueOf(sdf3.format(calendar.getTime()))+".txt";
+			String notiffile=configr.getProperty("mnotifFiles")+"\\NOTIFFILE"+String.valueOf(sdf3.format(calendar.getTime()))+".txt";
 			File myObj = new File(notiffile);
-		    System.out.println("File created: " + myObj.getName());
-		    FileWriter myWriter = new FileWriter(notiffile);
-		    myWriter.write(notif_MailAttachmentContent);
-		    myWriter.close();
-		    MailFiles.sendMail3(NotifBody, configr.getProperty("mnotifMail"), "", "Bulk Upload Notification Mail",notiffile,myLog);
+			System.out.println("File created: " + myObj.getName());
+			FileWriter myWriter = new FileWriter(notiffile);
+			myWriter.write(notif_MailAttachmentContent);
+			myWriter.close();
+			MailFiles.sendMail2(NotifBody, configr.getProperty("mnotifMail"), "", "Bulk Upload Notification Mail",notiffile,myLog);
 		}catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}  catch (IOException e) {
-			e.printStackTrace();
-		}catch (MessagingException e) {
 			e.printStackTrace();
 		}	
 	}
@@ -229,5 +230,41 @@ public class GAFiles {
 		GAFiles.MAILTEXT+="\r\n"+CurrentFilename+" moved to "+Destination+" in Go Anywhere\n";
 		myLog.logger.info(CurrentFilename+" moved to "+Destination+" in Go Anywhere\n");		
 	}
+	public static ChannelSftp getSFTPConn(Log myLog) {
+		ChannelSftp sftpChannel=null;
+		try{
+			Config configr= new Config();
+			String servername=configr.getProperty("mServer");
+			String uname=configr.getProperty("mServeruser");
+			String pass=configr.getProperty("mServerpwd");
+			int ftpport=configr.getIntProperty("mportftp");
+			JSch jsch = new JSch();
+			Session session = null;
 
+			session = jsch.getSession(uname, servername, ftpport);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");		
+
+			session.setConfig(config);
+			session.setPassword(pass);
+
+			session.connect();
+
+			ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+			channel.connect();
+
+			session.setTimeout(20000);
+
+			System.out.println("OK Successful - Reconnect");
+
+			sftpChannel = (ChannelSftp) channel;
+			sftpChannel.getHome();
+			myLog.logger.info("Go Anywhere Connection Successful -Reconnect");
+
+			sftpChannel.cd("/BulkUploadFiles//");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sftpChannel;
+	}
 }

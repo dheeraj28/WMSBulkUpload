@@ -11,18 +11,22 @@ public class DBConn {
 			
 			//Commented Below is the line of code for production.
 			
-/*			String urlpath=configr.getProperty("mconnurl");	
-			String Dbuser=configr.getProperty("mdbuser");	
-			String Dbpsw=configr.getProperty("mdbpwd");	
-			//System.out.println(urlpath+"\n"+Dbuser+"\n"+Dbpsw);
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");*/
+			/*
+			 * String urlpath=configr.getProperty("mconnurl"); String
+			 * Dbuser=configr.getProperty("mdbuser"); String
+			 * Dbpsw=configr.getProperty("mdbpwd");
+			 * //System.out.println(urlpath+"\n"+Dbuser+"\n"+Dbpsw);
+			 * Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			 */
 			
 			//Below lines of code are for UAT
 			
-			Class.forName("net.sourceforge.jtds.jdbc.Driver");			
-			String urlpath="jdbc:jtds:sqlserver://CORDBWT02:3322/WMST_AppDB;useCursors=true";
-			String Dbuser=configr.getProperty("mdbuser");	
-			String Dbpsw=configr.getProperty("mdbpwd");	
+			
+			  Class.forName("net.sourceforge.jtds.jdbc.Driver"); String
+			  urlpath="jdbc:jtds:sqlserver://CORDBWT02:3322/WMST_AppDB;useCursors=true";
+			  String Dbuser=configr.getProperty("mdbuser"); String
+			  Dbpsw=configr.getProperty("mdbpwd");
+			 
 			
 			conn=DriverManager.getConnection(urlpath,Dbuser,Dbpsw);
 			

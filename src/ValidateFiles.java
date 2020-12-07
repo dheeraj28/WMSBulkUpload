@@ -39,7 +39,10 @@ public class ValidateFiles {
 			for(int i=0;i<Fnames.length;i++) {
 				//System.out.println(Fnames[i]);
 				if(i==0) {
-					if("H03".equalsIgnoreCase(Fnames[i]) || "wsled".equalsIgnoreCase(Fnames[i]) || "ws-led".equalsIgnoreCase(Fnames[i]) ) {
+					if("H03".equalsIgnoreCase(Fnames[i]) || "wsled".equalsIgnoreCase(Fnames[i]) || 
+							"ws-led".equalsIgnoreCase(Fnames[i])|| "C04".equalsIgnoreCase(Fnames[i])
+							|| "C01".equalsIgnoreCase(Fnames[i])|| "B01".equalsIgnoreCase(Fnames[i])
+							|| "C03".equalsIgnoreCase(Fnames[i])) {
 						Formname=Fnames[i];
 					}
 					else {
